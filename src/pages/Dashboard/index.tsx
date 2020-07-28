@@ -1,6 +1,5 @@
 /* eslint-disable react/jsx-one-expression-per-line */
 import React, { useState, useEffect } from 'react';
-import { format } from 'date-fns';
 
 import income from '../../assets/income.svg';
 import outcome from '../../assets/outcome.svg';
@@ -11,6 +10,7 @@ import api from '../../services/api';
 import Header from '../../components/Header';
 
 import formatValue from '../../utils/formatValue';
+import formatDate from '../../utils/formatDate';
 
 import { Container, CardContainer, Card, TableContainer } from './styles';
 
@@ -26,9 +26,9 @@ interface Transaction {
 }
 
 interface Balance {
-  income: number;
-  outcome: number;
-  total: number;
+  income: string;
+  outcome: string;
+  total: string;
 }
 
 interface Request {
@@ -49,7 +49,7 @@ const Dashboard: React.FC = () => {
     }
 
     loadTransactions();
-  }, [transactions]);
+  }, []);
 
   return (
     <>
@@ -62,7 +62,7 @@ const Dashboard: React.FC = () => {
               <img src={income} alt="Income" />
             </header>
             <h1 data-testid="balance-income">
-              R$ {formatValue(balance.income)}
+              R$ {formatValue(Number(balance.income))}
             </h1>
           </Card>
           <Card>
@@ -71,7 +71,7 @@ const Dashboard: React.FC = () => {
               <img src={outcome} alt="Outcome" />
             </header>
             <h1 data-testid="balance-outcome">
-              R$ {formatValue(balance.outcome)}
+              R$ {formatValue(Number(balance.outcome))}
             </h1>
           </Card>
           <Card total>
@@ -79,7 +79,9 @@ const Dashboard: React.FC = () => {
               <p>Total</p>
               <img src={total} alt="Total" />
             </header>
-            <h1 data-testid="balance-total">R$ {formatValue(balance.total)}</h1>
+            <h1 data-testid="balance-total">
+              R$ {formatValue(Number(balance.total))}
+            </h1>
           </Card>
         </CardContainer>
 
@@ -100,12 +102,10 @@ const Dashboard: React.FC = () => {
                   <td className="title">{transaction.title}</td>
                   <td className={transaction.type}>
                     {transaction.type === 'outcome' && '- '}
-                    {`R$ ${formatValue(transaction.value)}`}
+                    {`${formatValue(Number(transaction.value))}`}
                   </td>
                   <td>{transaction.category.title}</td>
-                  <td>
-                    {format(new Date(transaction.created_at), 'dd/MM/yyyy')}
-                  </td>
+                  <td>{formatDate(new Date(transaction.created_at))}</td>
                 </tr>
               ))}
             </tbody>
